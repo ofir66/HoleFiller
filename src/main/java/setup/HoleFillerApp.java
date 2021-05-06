@@ -1,4 +1,5 @@
 package setup;
+
 import org.opencv.core.Core;
 import data.ConnectivityType;
 import data.Directory;
@@ -12,12 +13,6 @@ import holeFillerImpl.HoleFiller;
  * A class for initializing the hole filling library.
  */
 public class HoleFillerApp {
-    // Load native library for opencv
-    static{ 
-		String opencvpath = System.getProperty("user.dir") + "\\src\\main\\resources\\";
-		System.load(opencvpath + Core.NATIVE_LIBRARY_NAME + ".dll");
-    }
-
     /**
      * Initializes the hole filling library.
      * the parameter args should contain the following 5 elements: <br>
@@ -29,6 +24,10 @@ public class HoleFillerApp {
      * @param args - command line arguments
      */
     public static void main(String[] args) {
+    	// Load native library for opencv
+    	String opencvpath = System.getProperty("user.dir") + "\\src\\main\\resources\\";
+		System.load(opencvpath + Core.NATIVE_LIBRARY_NAME + ".dll");
+		
     	Directory inputDir = new Directory("input");
     	Directory outputDir = new Directory("output");
     	HoleFillerArgsParser parser = new HoleFillerArgsParser();

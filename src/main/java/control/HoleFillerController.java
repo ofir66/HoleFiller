@@ -1,5 +1,5 @@
 package control;
-import org.opencv.core.*;
+import org.opencv.core.Mat;
 import data.ConnectivityType;
 import data.HoleFillerModel;
 import data.HoleFillingAlgorithm;
@@ -13,12 +13,6 @@ import java.io.File;
  * A handler for controlling the logic in the hole filling library
  */
 public class HoleFillerController {
-	// Load native library for opencv
-    static{ 
-		String opencvpath = System.getProperty("user.dir") + "\\src\\main\\resources\\";
-		System.load(opencvpath + Core.NATIVE_LIBRARY_NAME + ".dll");
-    }
-    
     private final HoleFillerModel model;
     private final HoleFillerDisplay display;
 
