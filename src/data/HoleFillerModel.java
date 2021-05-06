@@ -8,15 +8,21 @@ public class HoleFillerModel {
 	private final Image mask;
 	private final WeightingFunc weightingFunc;
 	private final WeightingParams weightingParams;
+	private final Directory inputDir;
+	private final Directory outputDir;
+	
 	
 	public HoleFillerModel(ConnectivityType connectivityTypeVal, HoleFillingAlgorithm holeFillingAlgorithmVal, Image imgVal,
-			Image maskVal, WeightingFunc weightingFuncVal, WeightingParams weightingParamsVal) {
+			Image maskVal, WeightingFunc weightingFuncVal, WeightingParams weightingParamsVal, 
+			Directory inputDirVal, Directory outputDirVal) {
 		this.connectivityType = connectivityTypeVal;
 		this.holeFillingAlgorithm = holeFillingAlgorithmVal;
 		this.img = imgVal;
 		this.mask = maskVal;
 		this.weightingFunc = weightingFuncVal;
 		this.weightingParams = weightingParamsVal;
+		this.inputDir = inputDirVal;
+		this.outputDir = outputDirVal;
 	}
 
 	
@@ -43,4 +49,18 @@ public class HoleFillerModel {
 	public WeightingParams getWeightingParams() {
 		return weightingParams;
 	}
+
+
+	public Directory getInputDir() {
+		return inputDir;
+	}
+
+
+	public Directory getOutputDir() {
+		return outputDir;
+	}
+
+	
+	
+	
 }

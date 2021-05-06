@@ -1,6 +1,7 @@
 package setup;
 import org.opencv.core.Core;
 import data.ConnectivityType;
+import data.Directory;
 import data.HoleFillingAlgorithm;
 import data.Image;
 import data.WeightingFunc;
@@ -13,7 +14,9 @@ public class HoleFillerApp {
     static{ System.loadLibrary(Core.NATIVE_LIBRARY_NAME); }
 
     public static void main(String[] args) {
-    	HoleFillerArgsParser parser = new HoleFillerArgsParser(args);
+    	Directory inputDir = new Directory("input");
+    	Directory outputDir = new Directory("output");
+    	HoleFillerArgsParser parser = new HoleFillerArgsParser(args, inputDir);
     	
     	if (!parser.parseArgs()){
             return;
@@ -25,7 +28,7 @@ public class HoleFillerApp {
     	ConnectivityType connectivityType = parser.getConnectivityType();
     	
     	HoleFiller holeFiller = new HoleFiller(connectivityType, HoleFillingAlgorithm.DEFAULT, 
-    			image, mask, WeightingFunc.DEFAULT, weightingParams);
+    			image, mask, WeightingFunc.DEFAULT, weightingParams, inputDir, outputDir);
     	
     	holeFiller.process();
     }

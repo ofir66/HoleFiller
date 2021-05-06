@@ -3,6 +3,7 @@ package setup;
 import java.io.File;
 
 import data.ConnectivityType;
+import data.Directory;
 import data.WeightingParams;
 
 public class HoleFillerArgsParser {
@@ -18,13 +19,15 @@ public class HoleFillerArgsParser {
     private final int Z_VALUE = 2;
     private final int CONNECTIVITY_VALUE = 3;
     private final int EPSILON_VALUE = 4;
+    private final Directory inputDir;
     
-    public HoleFillerArgsParser(String[] argsVal) {
+    public HoleFillerArgsParser(String[] argsVal, Directory inputDirVal) {
         imagePath = null;
         maskPath = null;
         weightingParams = null;
         connectivityType = ConnectivityType.C4;
     	args = argsVal;
+    	inputDir = inputDirVal;
     }
     
 	
@@ -53,13 +56,13 @@ public class HoleFillerArgsParser {
     		for (int i = 0; i < argsLen; i++) {
     			switch(i) {
     				case IMAGE_PATH:
-    					imagePath = args[i];
+    					imagePath = this.inputDir.getPath() + "/" + args[i];
     					if (!assertPathExists(imagePath)) {
     						return false;
     					}
     					break;
     				case MASK_PATH:
-    					maskPath = args[i];
+    					maskPath = this.inputDir.getPath() + "/" + args[i];
     					if (!assertPathExists(maskPath)) {
     						return false;
     					}

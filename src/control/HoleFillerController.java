@@ -4,6 +4,8 @@ import org.opencv.imgcodecs.Imgcodecs;
 import data.ConnectivityType;
 import data.HoleFillerModel;
 import data.WeightingParams;
+import view.HoleFillerDisplay;
+
 import java.io.File;
 
 
@@ -12,10 +14,12 @@ public class HoleFillerController {
     static{ System.loadLibrary(Core.NATIVE_LIBRARY_NAME); }
     
     private final HoleFillerModel model;
+    private final HoleFillerDisplay display;
 
     
-    public HoleFillerController(HoleFillerModel modelVal) {
+    public HoleFillerController(HoleFillerModel modelVal, HoleFillerDisplay displayVal) {
     	this.model = modelVal;
+    	this.display = displayVal;
     }
     
 	private boolean validateInputImages(Mat src, Mat mask) {
@@ -48,25 +52,18 @@ public class HoleFillerController {
         ConnectivityType connectivityType = model.getConnectivityType();
         
     	String imagePath = model.getImg().getPath();
-    	String maskPath = model.getMask().getPath();
         String imageName = new File(imagePath).getName();
-        String maskName = new File(maskPath).getName();
         
         if (!validateInputImages(imageMat, maskMat)) {
         	return;
         }
         
-        System.out.println("Fill hole for: " + imageName + "\n" + 
-        				   "use mask: " + maskName + "\n" +
-        				   "z value: " + weightingParams.getZ() + "\n" + 
-        				   "epsilon value: " + weightingParams.getEpsilon() + "\n" + 
-        				   "connectivity value: " + connectivityType.getConnectivityDegree() + "\n");
-        
+        display.printHoleFillStartMsg(model.getImg(), model.getMask(), weightingParams, connectivityType);
         
         conversionHandler.carveHoleUsingMask(imageMat, maskMat, destMat);
         algCalculator.fillHole(destMat, connectivityType, weightingParams);
         conversionHandler.reconvertNormalizedImage(destMat);
-        Imgcodecs.imwrite("output/" + imageName, destMat);
+        display.saveImgToOutputFile(model.getOutputDir(), imageName, destMat);
         System.out.println("Result was saved in output folder");
     }
 }
