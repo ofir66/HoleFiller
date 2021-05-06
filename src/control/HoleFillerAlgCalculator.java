@@ -1,5 +1,6 @@
 package control;
 
+import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
@@ -7,24 +8,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 
 import data.ConnectivityType;
+import data.HoleFillingAlgorithm;
 import data.Pixel;
 import data.WeightingFunc;
 import data.WeightingParams;
+import old.WeightingDefaultFunc;
 
 public class HoleFillerAlgCalculator {
 
 	private final WeightingFunc weightingFunc;
 	private final WeightingParams weightingParams;
 	private final ConnectivityType connectivityType;
+	private final HoleFillingAlgorithm algorithm;
 
 	
 	public HoleFillerAlgCalculator(WeightingFunc weightingFuncVal, WeightingParams weightingParamsVal, 
-			ConnectivityType connectivityTypeVal) {
+			ConnectivityType connectivityTypeVal, HoleFillingAlgorithm algorithmVal) {
 		this.weightingFunc = weightingFuncVal;
 		this.weightingParams = weightingParamsVal;
 		this.connectivityType = connectivityTypeVal;
+		this.algorithm = algorithmVal;
 	}
 	
 	protected final float calcWeight(Pixel p1, Pixel p2) {
@@ -80,6 +86,95 @@ public class HoleFillerAlgCalculator {
     	}
     	
     	return neighbsWithoutHoles;
+    }
+    
+    public List<Pixel> findHolePixels(Mat im) {
+    	Size s = im.size();
+    	List<Pixel> holePixels = new ArrayList<Pixel>();
+    	
+        for (int i = 0; i < s.height; i++) {
+            for (int j = 0; j < s.width; j++) {
+                double[] val = im.get(i, j);
+                if (val[0] == (-1)){
+                	holePixels.add(new Pixel(i, j));
+                }
+            }
+        }
+        
+        return holePixels;
+    }
+    
+    /**
+     * Gets image that contains one hole with (-1) pixels value.
+     * Returns all the pixels around the hole s.t each boundary pixel is
+     * connected to the hole with the given type definition.
+     * @param im image contains one hole.
+     * @return A set with all the boundary pixels.
+     */
+    private List<Pixel> findHoleBoundary(Mat im, ConnectivityType t, List<Pixel> holePixels){
+        List<Pixel> bounds = new ArrayList<Pixel>();
+        for (Pixel h: holePixels) {
+        	bounds.addAll(getBoundaryPixels(h, im));
+        }
+        
+        return bounds;
+    }
+    
+    /**
+     * Fills a hole inside the given image, that marks by -1 pixels.
+     * Defines the hole's pixels value as an weighted average of the pixels around the hole.
+     * Use the Lib's default pixel weight object for the hole filling calculation.
+     * Need z and epsilon values to define it.
+     * The Lib's default equation: W(a, b) = (||a-b||^z + epsilon)^-1
+     */
+    public void fillHole(Mat im, ConnectivityType t, WeightingParams weightingParams)
+    {
+    	switch(this.algorithm) {
+    		case DEFAULT:
+    			this.fillHoleDefault(im, t, weightingParams);
+    			break;
+    		case APPROXIMATE:
+    			this.fillHoleApprox(im, t, weightingParams);
+    	}
+    }
+    
+    public void fillHoleDefault(Mat im, ConnectivityType t, WeightingParams weightingParams)
+    {
+    	List<Pixel> holePixels = this.findHolePixels(im);
+        List<Pixel> bound = findHoleBoundary(im, t, holePixels);
+        
+        for (Pixel hole: holePixels) {
+            double numeratorSum = 0;
+            double denominatorSum = 0;
+            for (Pixel neighbor : bound){
+                float weight = abs(calcWeight(neighbor, hole));
+                denominatorSum += weight;
+                numeratorSum += (weight * im.get(neighbor.getX(), neighbor.getY())[0]);
+            }
+            im.put(hole.getX(), hole.getY(), (numeratorSum/denominatorSum));
+        }    	
+    }
+    
+    /**
+     * Q2
+     * Approximate method that fo over all the nearest neighbors.
+     */
+    public void fillHoleApprox(Mat im, ConnectivityType t, WeightingParams weightingParams){
+    	WeightingDefaultFunc wf = new WeightingDefaultFunc(weightingParams.getZ(), weightingParams.getEpsilon());
+    	List<Pixel> holePixels = this.findHolePixels(im);
+        
+        for (Pixel hole: holePixels) {
+            double numeratorSum = 0;
+            double denominatorSum = 0;
+            List<Pixel> bound = getBoundaryPixels(hole, im);
+            
+            for (Pixel neighbor : bound){
+                float weight = abs(wf.getWeight(neighbor, hole));
+                denominatorSum += weight;
+                numeratorSum += (weight * im.get(neighbor.getX(), neighbor.getY())[0]);
+            }
+            im.put(hole.getX(), hole.getY(), (numeratorSum/denominatorSum));
+        }
     }
 	
 }
