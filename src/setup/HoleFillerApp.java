@@ -28,16 +28,36 @@ public class HoleFillerApp {
     public static void main(String[] args) {
     	Directory inputDir = new Directory("input");
     	Directory outputDir = new Directory("output");
-    	HoleFillerArgsParser parser = new HoleFillerArgsParser(args, inputDir);
+    	HoleFillerArgsParser parser = new HoleFillerArgsParser();
     	
-    	if (!parser.parseArgs()){
+    	String mainImgPath = parser.parseMainImgPath(args, inputDir);
+    	if (mainImgPath == null){
             return;
         }
     	
-    	Image mainImg = new Image(parser.getMainImgPath());
-    	Image maskImg = new Image(parser.getMaskImgPath());
-    	WeightingFuncParams weightingParams = parser.getWeightingParams();
-    	ConnectivityType connectivityType = parser.getConnectivityType();
+    	String maskImgPath = parser.parseMaskImgPath(args, inputDir);
+    	if (maskImgPath == null){
+            return;
+        }
+    	
+    	int z = parser.parseZValue(args);
+    	if (z < 0){
+            return;
+        }
+    	
+    	ConnectivityType connectivityType = parser.parseConnectivitiyValue(args);
+    	if (connectivityType == null) {
+    		return;
+    	}
+    	
+    	float epsilon = parser.parseEpsilonValue(args);
+    	if (epsilon < 0) {
+    		return;
+    	}
+    	
+    	Image mainImg = new Image(mainImgPath);
+    	Image maskImg = new Image(maskImgPath);
+    	WeightingFuncParams weightingParams = new WeightingFuncParams(z, epsilon);
     	
     	HoleFiller holeFiller = new HoleFiller(connectivityType, HoleFillingAlgorithm.DEFAULT, 
     			mainImg, maskImg, WeightingFunc.DEFAULT, weightingParams, inputDir, outputDir);

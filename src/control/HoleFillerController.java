@@ -2,6 +2,8 @@ package control;
 import org.opencv.core.*;
 import data.ConnectivityType;
 import data.HoleFillerModel;
+import data.HoleFillingAlgorithm;
+import data.WeightingFunc;
 import data.WeightingFuncParams;
 import view.HoleFillerDisplay;
 
@@ -45,15 +47,16 @@ public class HoleFillerController {
 	 */
     public void process() {
     	HoleFillerConversionHandler conversionHandler = new HoleFillerConversionHandler();
-    	HoleFillerAlgCalculator algCalculator = new HoleFillerAlgCalculator(model.getWeightingFunc(), model.getWeightingParams(),
-    			model.getConnectivityType(), model.getHoleFillingAlgorithm());
+    	HoleFillerAlgCalculator algCalculator = new HoleFillerAlgCalculator();
     	
         Mat mainImgMat = conversionHandler.convertToGrayscale(model.getMainImg());
         Mat maskImgMat = conversionHandler.convertToGrayscale(model.getMaskImg());
         Mat destMat = new Mat();
         
+        WeightingFunc weightFunc = model.getWeightingFunc();
         WeightingFuncParams weightingParams = model.getWeightingParams();
         ConnectivityType connectivityType = model.getConnectivityType();
+        HoleFillingAlgorithm alg = model.getHoleFillingAlgorithm();
         
     	String mainImgPath = model.getMainImg().getPath();
         String mainImgName = new File(mainImgPath).getName();
@@ -65,7 +68,7 @@ public class HoleFillerController {
         display.printHoleFillStartMsg(model.getMainImg(), model.getMaskImg(), weightingParams, connectivityType);
         
         conversionHandler.createHoleWithMask(mainImgMat, maskImgMat, destMat);
-        algCalculator.fillHolePixels(destMat, connectivityType, weightingParams);
+        algCalculator.fillHolePixels(destMat, connectivityType, weightFunc, weightingParams, alg);
         conversionHandler.reconvertNormalizedImage(destMat);
         display.saveImgToOutputFile(model.getOutputDir(), mainImgName, destMat);
     }
