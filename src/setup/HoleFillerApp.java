@@ -31,27 +31,27 @@ public class HoleFillerApp {
     	HoleFillerArgsParser parser = new HoleFillerArgsParser();
     	
     	String mainImgPath = parser.parseMainImgPath(args, inputDir);
-    	if (mainImgPath == null){
+    	if (mainImgPath == CmdLineArg.INVALID_MAIN_IMG_ARG){
             return;
         }
     	
     	String maskImgPath = parser.parseMaskImgPath(args, inputDir);
-    	if (maskImgPath == null){
+    	if (maskImgPath == CmdLineArg.INVALID_MASK_IMG_ARG){
             return;
         }
     	
     	int z = parser.parseZValue(args);
-    	if (z < 0){
+    	if (z == CmdLineArg.INVALID_Z_VALUE){
             return;
         }
     	
     	ConnectivityType connectivityType = parser.parseConnectivitiyValue(args);
-    	if (connectivityType == null) {
+    	if (connectivityType == CmdLineArg.INVALID_CONNECTIVITY_VALUE) {
     		return;
     	}
     	
     	float epsilon = parser.parseEpsilonValue(args);
-    	if (epsilon < 0) {
+    	if (epsilon == CmdLineArg.INVALID_EPSILON_VALUE) {
     		return;
     	}
     	

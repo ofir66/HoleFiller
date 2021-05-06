@@ -25,13 +25,13 @@ public class HoleFillerArgsParser {
 	 * Finds the main image path from the command line arguments
 	 * @param args - command line arguments
 	 * @param inputDir - input directory where the main image at
-	 * @return the main image path if its command line argument is valid and null otherwise
+	 * @return the main image path if its command line argument is valid and CmdLineArg.INVALID_MAIN_IMG_ARG otherwise
 	 */
 	public String parseMainImgPath(String[] args, Directory inputDir) {
 		String mainImgPath = inputDir.getPath() + "/" + args[CmdLineArg.MAIN_IMG_PATH];
 		
 		if (!assertPathExists(mainImgPath)) {
-			return null;
+			return CmdLineArg.INVALID_MAIN_IMG_ARG;
 		}
 		
 		return mainImgPath;
@@ -41,13 +41,13 @@ public class HoleFillerArgsParser {
 	 * Finds the mask image path from the command line arguments
 	 * @param args - command line arguments
 	 * @param inputDir - input directory where the mask image at
-	 * @return the mask image path if its command line argument is valid and null otherwise
+	 * @return the mask image path if its command line argument is valid and CmdLineArg.INVALID_MASK_IMG_ARG otherwise
 	 */
 	public String parseMaskImgPath(String[] args, Directory inputDir) {
 		String maskImgPath = inputDir.getPath() + "/" + args[CmdLineArg.MASK_IMG_PATH];
 		
 		if (!assertPathExists(maskImgPath)) {
-			return null;
+			return CmdLineArg.INVALID_MASK_IMG_ARG;
 		}
 		
 		return maskImgPath;
@@ -56,20 +56,22 @@ public class HoleFillerArgsParser {
 	/**
 	 * Finds the z value from the command line arguments
 	 * @param args - command line arguments
-	 * @return the z value if its command line argument is valid and a negative value otherwise
+	 * @return the z value if its command line argument is valid and CmdLineArg.INVALID_Z_VALUE otherwise
 	 */
 	public int parseZValue(String[] args) {
-        int z = -1;
+        int z;
         
 		try {
             z = Integer.parseInt(args[CmdLineArg.Z_VALUE]);
         } catch (NumberFormatException e){
         	HoleFillerDisplay.printToStderr("Error - z value doesn't represent an integer, should be an integer>0");
-            return -1;
+        	z = CmdLineArg.INVALID_Z_VALUE;
+        	return z;
         }
         
         if (z <= 0){
         	HoleFillerDisplay.printToStderr("z value invalid - should represent an integer>0");
+        	z = CmdLineArg.INVALID_Z_VALUE;
         }
         
         return z;
@@ -78,10 +80,11 @@ public class HoleFillerArgsParser {
 	/**
 	 * Finds the pixel connectivity type from the command line arguments
 	 * @param args - command line arguments
-	 * @return the pixel connectivity type if its command line argument is valid and null otherwise
+	 * @return the pixel connectivity type if its command line argument is valid 
+	 * and CmdLineArg.INVALID_CONNECTIVITY_VALUE otherwise
 	 */
 	public ConnectivityType parseConnectivitiyValue(String[] args) {
-		ConnectivityType connectivityType = null;
+		ConnectivityType connectivityType;
 		int connectivityValue;
 		
 		try {
@@ -95,10 +98,12 @@ public class HoleFillerArgsParser {
         	else {
             	HoleFillerDisplay.printToStderr("Error - connectivity value must be 4 or 8, current value is: " 
  					   + connectivityValue);
+            	connectivityType = CmdLineArg.INVALID_CONNECTIVITY_VALUE;
         	}
         } catch (NumberFormatException e){
         	HoleFillerDisplay.printToStderr("Error - connectivity value doesn't represent an integer, "
         			+ "should represent an integer with value 4 or 8");
+        	connectivityType = CmdLineArg.INVALID_CONNECTIVITY_VALUE;
         }
 
 		return connectivityType;
@@ -107,20 +112,22 @@ public class HoleFillerArgsParser {
 	/**
 	 * Finds the epsilon value from the command line arguments
 	 * @param args - command line arguments
-	 * @return the epsilon value if its command line argument is valid and a negative value otherwise
+	 * @return the epsilon value if its command line argument is valid and CmdLineArg.INVALID_EPSILON_VALUEe otherwise
 	 */
 	public float parseEpsilonValue(String[] args) {
-        float epsilon = -1;
+        float epsilon;
 		
 		try {
             epsilon = Float.parseFloat(args[CmdLineArg.EPSILON_VALUE]);
         } catch (NumberFormatException e){
         	HoleFillerDisplay.printToStderr("Error - epsilon value doesn't represent a float, should represent a float > 0");
-        	return -1;
+        	epsilon = CmdLineArg.INVALID_EPSILON_VALUE;
+        	return epsilon;
         }
         
         if (epsilon <= 0){
         	HoleFillerDisplay.printToStderr("epsilon value is invalid - should be a float > 0");
+        	epsilon = CmdLineArg.INVALID_EPSILON_VALUE;
         }
         
         return epsilon;
