@@ -29,14 +29,14 @@ public class HoleFillerArgsParser {
         mainImgPath = null;
         maskImgPath = null;
         weightingParams = null;
-        connectivityType = ConnectivityType.C4;
+        connectivityType = ConnectivityType.FOUR_CONNECTED;
     	args = argsVal;
     	inputDir = inputDirVal;
     }
     
 	
     /**
-     * Parse the command line arguments, according to the structure described on {@link HoleFillerApp#main(String[] args)} javadoc
+     * Parses the command line arguments, according to the structure described on {@link HoleFillerApp#main(String[] args)} javadoc
      * @return
      */
     public boolean parseArgs(){
@@ -83,17 +83,17 @@ public class HoleFillerArgsParser {
     	                try {
     	                	int connectivityDegree = Integer.parseInt(args[i]);
     	                	if (connectivityDegree == 4) {
-    	                		connectivityType = ConnectivityType.C4;
+    	                		connectivityType = ConnectivityType.FOUR_CONNECTED;
     	                	}
     	                	else {
-    	                		connectivityType = ConnectivityType.C8;
+    	                		connectivityType = ConnectivityType.EIGHT_CONNECTED;
     	                	}
     	                } catch (NumberFormatException e){
     	                	HoleFillerDisplay.printToStderr("Error - connectivity value isn't an integer");
     	                    return false;
     	                }
-    	                if ( (connectivityType != ConnectivityType.C4) && 
-    	                	 (connectivityType != ConnectivityType.C8) ) {
+    	                if ( (connectivityType != ConnectivityType.FOUR_CONNECTED) && 
+    	                	 (connectivityType != ConnectivityType.EIGHT_CONNECTED) ) {
     	                	HoleFillerDisplay.printToStderr("Error - connectivity value must be 4 or 8, current value is: " 
              					   + connectivityType);
     	                	return false;

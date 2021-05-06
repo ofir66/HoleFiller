@@ -4,8 +4,8 @@ package data;
  * Represents the pixel connectivity value. 
  */
 public enum ConnectivityType {
-    C4(4),
-    C8(8);
+    FOUR_CONNECTED(4),
+    EIGHT_CONNECTED(8);
 	
 	private final int connectivityDegree;
 	

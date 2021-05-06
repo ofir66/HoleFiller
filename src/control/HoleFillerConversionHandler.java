@@ -8,6 +8,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
+import constants.GlobalConstants;
 import data.Image;
 
 public class HoleFillerConversionHandler {
@@ -26,15 +27,17 @@ public class HoleFillerConversionHandler {
      * @param dst - grayscale destination image.
      */
     public void createHoleWithMask(Mat mainImgMat, Mat maskImgMat, Mat dst){
-        Core.normalize(mainImgMat, dst,0.0,1.0, Core.NORM_MINMAX, CvType.CV_32FC1);
-        Mat binMask = new Mat();
-        Imgproc.threshold(maskImgMat, binMask, 127, 1, Imgproc.THRESH_BINARY_INV);
+        Core.normalize(mainImgMat, dst, GlobalConstants.MIN_LIBRARY_PIXEL_VALUE, GlobalConstants.MAX_LIBRARY_PIXEL_VALUE, 
+        		Core.NORM_MINMAX, CvType.CV_32FC1);
+        Mat binaryMask = new Mat();
+        Imgproc.threshold(maskImgMat, binaryMask, GlobalConstants.GRAYSCALE_THRESHOLD_VALUE, GlobalConstants.MAX_LIBRARY_PIXEL_VALUE, 
+        		Imgproc.THRESH_BINARY_INV);
         
         /*
-         * set all values on dst that aren't -1 on binMask to be -1
+         * sets all values on dst that aren't HOLE_INDICATOR on binaryMask to be HOLE_INDICATOR
          * example: https://stackoverflow.com/questions/8971308/what-is-cvsetto-function/8973044
          */
-        dst.setTo(new Scalar(-1), binMask);
+        dst.setTo(new Scalar(GlobalConstants.HOLE_INDICATOR), binaryMask);
     }
     
     /**
@@ -42,7 +45,7 @@ public class HoleFillerConversionHandler {
      * and converts the values to the range [0,255].
      */
     public void reconvertNormalizedImage(Mat im){
-        Core.multiply(im, new Scalar(255), im);
+        Core.multiply(im, new Scalar(GlobalConstants.MAX_GRAYSCALE_VALUE), im);
         im.convertTo(im, CvType.CV_8UC1);
     }
 

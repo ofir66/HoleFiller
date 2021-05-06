@@ -10,6 +10,7 @@ import java.util.List;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
+import constants.GlobalConstants;
 import data.ConnectivityType;
 import data.HoleFillingAlgorithm;
 import data.Pixel;
@@ -61,7 +62,7 @@ public class HoleFillerAlgCalculator {
         int pY = p.getY();
     	
     	switch(connectivityType) {
-    		case C4:
+    		case FOUR_CONNECTED:
     	        int[] x = new int[]{pX-1, pX+1, pX, pX};
     	        int[] y = new int[]{pY, pY, pY-1, pY+1};
     	        
@@ -70,7 +71,7 @@ public class HoleFillerAlgCalculator {
     	        }
     	        
     			break;
-    		case C8:
+    		case EIGHT_CONNECTED:
     	        for (int i = pX-1; i < (pX+2); i++) {
     	            for (int j = pY-1; j < (pY+2); j++) {
     	            	if ( (i!=pX) || (j!=pY)  ) {
@@ -95,7 +96,7 @@ public class HoleFillerAlgCalculator {
     	
     	for (Pixel pI : neighbs) {
     		double[] val = im.get(pI.getX(), pI.getY());
-            if (val[0] != (-1)){
+            if (val[0] != GlobalConstants.HOLE_INDICATOR){
             	neighbsWithoutHoles.add(pI);
             }
     	}
@@ -104,13 +105,13 @@ public class HoleFillerAlgCalculator {
     }
     
     private List<Pixel> findHolePixels(Mat im) {
-    	Size s = im.size();
+    	Size size = im.size();
     	List<Pixel> holePixels = new ArrayList<Pixel>();
     	
-        for (int i = 0; i < s.height; i++) {
-            for (int j = 0; j < s.width; j++) {
+        for (int i = 0; i < size.height; i++) {
+            for (int j = 0; j < size.width; j++) {
                 double[] val = im.get(i, j);
-                if (val[0] == (-1)){
+                if (val[0] == GlobalConstants.HOLE_INDICATOR){
                 	holePixels.add(new Pixel(i, j));
                 }
             }
@@ -128,12 +129,12 @@ public class HoleFillerAlgCalculator {
      * @return list of the boundary pixels in the image
      */
     private List<Pixel> findBoundaryPixels(Mat im, ConnectivityType connectivityType, List<Pixel> holePixels){
-        List<Pixel> bounds = new ArrayList<Pixel>();
+        List<Pixel> boundaryPixels = new ArrayList<Pixel>();
         for (Pixel h: holePixels) {
-        	bounds.addAll(getNeighborsWithoutHoles(h, im));
+        	boundaryPixels.addAll(getNeighborsWithoutHoles(h, im));
         }
         
-        return bounds;
+        return boundaryPixels;
     }
     
     /**
@@ -163,17 +164,19 @@ public class HoleFillerAlgCalculator {
     private void fillHolePixelsDefaultAlg(Mat im, ConnectivityType connectivityType, WeightingFuncParams weightingParams)
     {
     	List<Pixel> holePixels = this.findHolePixels(im);
-        List<Pixel> bound = findBoundaryPixels(im, connectivityType, holePixels);
+        List<Pixel> boundaryPixels = findBoundaryPixels(im, connectivityType, holePixels);
         
         for (Pixel hole: holePixels) {
-            double numeratorSum = 0;
-            double denominatorSum = 0;
-            for (Pixel neighbor : bound){
-                float weight = abs(calcWeight(neighbor, hole));
-                denominatorSum += weight;
-                numeratorSum += (weight * im.get(neighbor.getX(), neighbor.getY())[0]);
+            double algNumerator = 0;
+            double algDenominator = 0;
+            for (Pixel boundaryPixel : boundaryPixels){
+                float weight = abs(calcWeight(boundaryPixel, hole));
+                algDenominator += weight;
+                
+                double boundaryPixelVal = im.get(boundaryPixel.getX(), boundaryPixel.getY())[0];
+                algNumerator += (weight * boundaryPixelVal);
             }
-            im.put(hole.getX(), hole.getY(), (numeratorSum/denominatorSum));
+            im.put(hole.getX(), hole.getY(), (algNumerator/algDenominator));
         }    	
     }
     
@@ -188,16 +191,16 @@ public class HoleFillerAlgCalculator {
     	List<Pixel> holePixels = this.findHolePixels(im);
         
         for (Pixel hole: holePixels) {
-            double numeratorSum = 0;
-            double denominatorSum = 0;
-            List<Pixel> bound = getNeighborsWithoutHoles(hole, im);
+            double algNumerator = 0;
+            double algDenominator = 0;
+            List<Pixel> neighborsWithoutHoles = getNeighborsWithoutHoles(hole, im);
             
-            for (Pixel neighbor : bound){
+            for (Pixel neighbor : neighborsWithoutHoles){
                 float weight = abs(calcWeight(neighbor, hole));
-                denominatorSum += weight;
-                numeratorSum += (weight * im.get(neighbor.getX(), neighbor.getY())[0]);
+                algDenominator += weight;
+                algNumerator += (weight * im.get(neighbor.getX(), neighbor.getY())[0]);
             }
-            im.put(hole.getX(), hole.getY(), (numeratorSum/denominatorSum));
+            im.put(hole.getX(), hole.getY(), (algNumerator/algDenominator));
         }
     }
 	

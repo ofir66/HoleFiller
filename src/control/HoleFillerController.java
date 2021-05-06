@@ -25,15 +25,15 @@ public class HoleFillerController {
     
 	private boolean validateInputImages(Mat src, Mat mask) {
 		if (src.empty()) {
-			HoleFillerDisplay.printToStderr("Error: format for image source is invalid");
+			HoleFillerDisplay.printToStderr("format for main image is invalid");
 			return false;
 		}
 		if (mask.empty()){
-			HoleFillerDisplay.printToStderr("Error: format for mask source is invalid");
+			HoleFillerDisplay.printToStderr("format for mask image is invalid");
             return false;
         }
         if (src.size().width != mask.size().width || src.size().height != mask.size().height){
-        	HoleFillerDisplay.printToStderr("Error: image and mask sources doesn't have the same dimensions");
+        	HoleFillerDisplay.printToStderr("main image and mask image don't have the same dimensions");
             return false;
         }
         

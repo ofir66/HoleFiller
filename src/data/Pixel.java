@@ -10,15 +10,15 @@ public class Pixel {
     }
 
 
-    public boolean equals(Object o){
-        if (o == this) {
+    public boolean equals(Object other){
+        if (other == this) {
             return true;
         }
-        if (!(o instanceof Pixel)) {
+        if (!(other instanceof Pixel)) {
             return false;
         }
-        Pixel p = (Pixel) o;
-        return this.x == p.x && this.y == p.y;
+        Pixel pOther = (Pixel) other;
+        return this.x == pOther.x && this.y == pOther.y;
     }
     
     public int getX() {
