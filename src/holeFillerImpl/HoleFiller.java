@@ -18,10 +18,10 @@ public class HoleFiller implements ImageProcessor{
 	private final HoleFillerDisplay display;
 	private final HoleFillerController controller;
 	
-	public HoleFiller(ConnectivityType connectivityTypeVal, HoleFillingAlgorithm holeFillingAlgorithmVal, Image imgVal,
-			Image mask, WeightingFunc weightingFuncVal, WeightingParams weightingParamsVal,
+	public HoleFiller(ConnectivityType connectivityTypeVal, HoleFillingAlgorithm holeFillingAlgorithmVal, Image mainImgVal,
+			Image maskImgVal, WeightingFunc weightingFuncVal, WeightingParams weightingParamsVal,
 			Directory inputDirVal, Directory outputDirVal) {
-		this.model = new HoleFillerModel(connectivityTypeVal, holeFillingAlgorithmVal, imgVal, mask,
+		this.model = new HoleFillerModel(connectivityTypeVal, holeFillingAlgorithmVal, mainImgVal, maskImgVal,
 				weightingFuncVal, weightingParamsVal, inputDirVal, outputDirVal);
 		this.display = new HoleFillerDisplay();
 		this.controller = new HoleFillerController(model, display);

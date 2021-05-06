@@ -22,13 +22,13 @@ public class HoleFillerApp {
             return;
         }
     	
-    	Image image = new Image(parser.getImagePath());
-    	Image mask = new Image(parser.getMaskPath());
+    	Image mainImg = new Image(parser.getMainImgPath());
+    	Image maskImg = new Image(parser.getMaskImgPath());
     	WeightingParams weightingParams = parser.getWeightingParams();
     	ConnectivityType connectivityType = parser.getConnectivityType();
     	
     	HoleFiller holeFiller = new HoleFiller(connectivityType, HoleFillingAlgorithm.DEFAULT, 
-    			image, mask, WeightingFunc.DEFAULT, weightingParams, inputDir, outputDir);
+    			mainImg, maskImg, WeightingFunc.DEFAULT, weightingParams, inputDir, outputDir);
     	
     	holeFiller.process();
     }

@@ -9,22 +9,22 @@ import view.HoleFillerDisplay;
 
 public class HoleFillerArgsParser {
 
-    private String imagePath;
-    private String maskPath;
+    private String mainImgPath;
+    private String maskImgPath;
     private WeightingParams weightingParams;
     private ConnectivityType connectivityType;
     private String[] args;
+    private final Directory inputDir;
 	
-    private final int IMAGE_PATH = 0;
-    private final int MASK_PATH = 1;
+    private final int MAIN_IMG_PATH = 0;
+    private final int MASK_IMG_PATH = 1;
     private final int Z_VALUE = 2;
     private final int CONNECTIVITY_VALUE = 3;
     private final int EPSILON_VALUE = 4;
-    private final Directory inputDir;
     
     public HoleFillerArgsParser(String[] argsVal, Directory inputDirVal) {
-        imagePath = null;
-        maskPath = null;
+        mainImgPath = null;
+        maskImgPath = null;
         weightingParams = null;
         connectivityType = ConnectivityType.C4;
     	args = argsVal;
@@ -56,15 +56,15 @@ public class HoleFillerArgsParser {
     		
     		for (int i = 0; i < argsLen; i++) {
     			switch(i) {
-    				case IMAGE_PATH:
-    					imagePath = this.inputDir.getPath() + "/" + args[i];
-    					if (!assertPathExists(imagePath)) {
+    				case MAIN_IMG_PATH:
+    					mainImgPath = this.inputDir.getPath() + "/" + args[i];
+    					if (!assertPathExists(mainImgPath)) {
     						return false;
     					}
     					break;
-    				case MASK_PATH:
-    					maskPath = this.inputDir.getPath() + "/" + args[i];
-    					if (!assertPathExists(maskPath)) {
+    				case MASK_IMG_PATH:
+    					maskImgPath = this.inputDir.getPath() + "/" + args[i];
+    					if (!assertPathExists(maskImgPath)) {
     						return false;
     					}
     					break;
@@ -133,13 +133,13 @@ public class HoleFillerArgsParser {
 	}
 
 
-	public String getImagePath() {
-		return imagePath;
+	public String getMainImgPath() {
+		return mainImgPath;
 	}
 
 
-	public String getMaskPath() {
-		return maskPath;
+	public String getMaskImgPath() {
+		return maskImgPath;
 	}
 
 	public WeightingParams getWeightingParams() {

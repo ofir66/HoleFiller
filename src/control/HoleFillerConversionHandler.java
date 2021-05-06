@@ -12,14 +12,6 @@ import data.Image;
 
 public class HoleFillerConversionHandler {
 	
-	private final Image img;
-	private final Image mask;
-	
-	public HoleFillerConversionHandler(Image imgVal, Image maskVal) {
-		this.img = imgVal;
-		this.mask = maskVal;
-	}
-	
 	public Mat convertToGrayscale(Image im) {
     	String path = im.getPath();
         return Imgcodecs.imread(path, Imgcodecs.IMREAD_GRAYSCALE);
@@ -30,14 +22,14 @@ public class HoleFillerConversionHandler {
      * Normalize the image values to 0 - 1.
      * Set image values to -1 in the mask positions.
      * Convert to type:CV_32FC1
-     * @param im grayScale image (0-255).
-     * @param mask grayScale image (0-255), (the black pixels represent the hole).
+     * @param mainImgMat grayScale image (0-255).
+     * @param maskImgMat grayScale image (0-255), (the black pixels represent the hole).
      * @param dst Save the result to dst.
      */
-    public void carveHoleUsingMask(Mat im, Mat mask, Mat dst){
-        Core.normalize(im, dst,0.0,1.0, Core.NORM_MINMAX, CvType.CV_32FC1);
+    public void carveHoleUsingMask(Mat mainImgMat, Mat maskImgMat, Mat dst){
+        Core.normalize(mainImgMat, dst,0.0,1.0, Core.NORM_MINMAX, CvType.CV_32FC1);
         Mat binMask = new Mat();
-        Imgproc.threshold(mask, binMask, 127, 1, Imgproc.THRESH_BINARY_INV);
+        Imgproc.threshold(maskImgMat, binMask, 127, 1, Imgproc.THRESH_BINARY_INV);
         
         /*
          * set all values on dst that aren't -1 on binMask to be -1
@@ -55,11 +47,4 @@ public class HoleFillerConversionHandler {
         im.convertTo(im, CvType.CV_8UC1);
     }
 
-	public Image getImg() {
-		return img;
-	}
-
-	public Image getMask() {
-		return mask;
-	}
 }

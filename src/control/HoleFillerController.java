@@ -39,30 +39,30 @@ public class HoleFillerController {
 	}
     
     public void process() {
-    	HoleFillerConversionHandler conversionHandler = new HoleFillerConversionHandler(model.getImg(), model.getMask());
+    	HoleFillerConversionHandler conversionHandler = new HoleFillerConversionHandler();
     	HoleFillerAlgCalculator algCalculator = new HoleFillerAlgCalculator(model.getWeightingFunc(), model.getWeightingParams(),
     			model.getConnectivityType(), model.getHoleFillingAlgorithm());
     	
-        Mat imageMat = conversionHandler.convertToGrayscale(model.getImg());
-        Mat maskMat = conversionHandler.convertToGrayscale(model.getMask());
+        Mat mainImgMat = conversionHandler.convertToGrayscale(model.getMainImg());
+        Mat maskImgMat = conversionHandler.convertToGrayscale(model.getMaskImg());
         Mat destMat = new Mat();
         
         WeightingParams weightingParams = model.getWeightingParams();
         ConnectivityType connectivityType = model.getConnectivityType();
         
-    	String imagePath = model.getImg().getPath();
-        String imageName = new File(imagePath).getName();
+    	String mainImgPath = model.getMainImg().getPath();
+        String mainImgName = new File(mainImgPath).getName();
         
-        if (!validateInputImages(imageMat, maskMat)) {
+        if (!validateInputImages(mainImgMat, maskImgMat)) {
         	return;
         }
         
-        display.printHoleFillStartMsg(model.getImg(), model.getMask(), weightingParams, connectivityType);
+        display.printHoleFillStartMsg(model.getMainImg(), model.getMaskImg(), weightingParams, connectivityType);
         
-        conversionHandler.carveHoleUsingMask(imageMat, maskMat, destMat);
+        conversionHandler.carveHoleUsingMask(mainImgMat, maskImgMat, destMat);
         algCalculator.fillHole(destMat, connectivityType, weightingParams);
         conversionHandler.reconvertNormalizedImage(destMat);
-        display.saveImgToOutputFile(model.getOutputDir(), imageName, destMat);
+        display.saveImgToOutputFile(model.getOutputDir(), mainImgName, destMat);
     }
 }
 
