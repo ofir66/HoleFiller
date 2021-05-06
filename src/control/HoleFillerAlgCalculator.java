@@ -89,7 +89,7 @@ public class HoleFillerAlgCalculator {
 	 * @param im - the image to find the neighbors in
 	 * @return list of the neighbors of p, not including the hole neighbors
      */
-    public List<Pixel> getNeighborsWithoutHoles(Pixel p, Mat im){
+    private List<Pixel> getNeighborsWithoutHoles(Pixel p, Mat im){
     	List<Pixel> neighbs = getNeighbors(p, im);
     	List<Pixel> neighbsWithoutHoles = new ArrayList<Pixel>();
     	
