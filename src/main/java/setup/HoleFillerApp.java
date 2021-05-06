@@ -25,8 +25,8 @@ public class HoleFillerApp {
      */
     public static void main(String[] args) {
     	// Load native library for opencv
-    	String opencvpath = System.getProperty("user.dir") + "\\src\\main\\resources\\";
-		System.load(opencvpath + Core.NATIVE_LIBRARY_NAME + ".dll");
+    	String opencvDllPath = System.getProperty("user.dir") + OpencvInitConstants.DLL_PATH;
+		System.load(opencvDllPath + Core.NATIVE_LIBRARY_NAME + ".dll");
 		
     	Directory inputDir = new Directory("input");
     	Directory outputDir = new Directory("output");
