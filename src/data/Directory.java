@@ -1,5 +1,6 @@
 package data;
 
+
 public class Directory {
 	
 	private final String path;

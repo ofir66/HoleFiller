@@ -4,14 +4,17 @@ import java.io.File;
 
 import data.ConnectivityType;
 import data.Directory;
-import data.WeightingParams;
+import data.WeightingFuncParams;
 import view.HoleFillerDisplay;
 
+/**
+ * A class for parsing the command line arguments.
+ */
 public class HoleFillerArgsParser {
 
     private String mainImgPath;
     private String maskImgPath;
-    private WeightingParams weightingParams;
+    private WeightingFuncParams weightingParams;
     private ConnectivityType connectivityType;
     private String[] args;
     private final Directory inputDir;
@@ -33,14 +36,8 @@ public class HoleFillerArgsParser {
     
 	
     /**
-     * @param args: should contain the following 5 elements:
-     * args[0] = path to the image
-     * args[1] = path to the image mask (which describes the hole)
-     * args[2] = z value
-     * args[3] = connectivityType - should be "4" or "8" only
-     * args[4] = epsilon value
-     * @return: true is parsing was successful and false otherwise
-     * @throws: NumberFormatException if args[2] or args[3] or args[4] doesn't represent numeric value
+     * Parse the command line arguments, according to the structure described on {@link HoleFillerApp#main(String[] args)} javadoc
+     * @return
      */
     public boolean parseArgs(){
     	int argsLen = args.length;
@@ -117,7 +114,7 @@ public class HoleFillerArgsParser {
     			}
     		}
     		
-    		this.weightingParams = new WeightingParams(z, epsilon);
+    		this.weightingParams = new WeightingFuncParams(z, epsilon);
     	}
     	
     	return true;
@@ -142,7 +139,7 @@ public class HoleFillerArgsParser {
 		return maskImgPath;
 	}
 
-	public WeightingParams getWeightingParams() {
+	public WeightingFuncParams getWeightingParams() {
 		return weightingParams;
 	}
 

@@ -2,12 +2,14 @@ package control;
 import org.opencv.core.*;
 import data.ConnectivityType;
 import data.HoleFillerModel;
-import data.WeightingParams;
+import data.WeightingFuncParams;
 import view.HoleFillerDisplay;
 
 import java.io.File;
 
-
+/**
+ * A handler for controlling the logic in the hole filling library
+ */
 public class HoleFillerController {
 	// Load native library for opencv
     static{ System.loadLibrary(Core.NATIVE_LIBRARY_NAME); }
@@ -38,6 +40,9 @@ public class HoleFillerController {
         return true;
 	}
     
+	/**
+	 * Starts the hole filling process by using {@link HoleFillerConversionHandler} and {@link HoleFillerAlgCalculator}.
+	 */
     public void process() {
     	HoleFillerConversionHandler conversionHandler = new HoleFillerConversionHandler();
     	HoleFillerAlgCalculator algCalculator = new HoleFillerAlgCalculator(model.getWeightingFunc(), model.getWeightingParams(),
@@ -47,7 +52,7 @@ public class HoleFillerController {
         Mat maskImgMat = conversionHandler.convertToGrayscale(model.getMaskImg());
         Mat destMat = new Mat();
         
-        WeightingParams weightingParams = model.getWeightingParams();
+        WeightingFuncParams weightingParams = model.getWeightingParams();
         ConnectivityType connectivityType = model.getConnectivityType();
         
     	String mainImgPath = model.getMainImg().getPath();
@@ -59,8 +64,8 @@ public class HoleFillerController {
         
         display.printHoleFillStartMsg(model.getMainImg(), model.getMaskImg(), weightingParams, connectivityType);
         
-        conversionHandler.carveHoleUsingMask(mainImgMat, maskImgMat, destMat);
-        algCalculator.fillHole(destMat, connectivityType, weightingParams);
+        conversionHandler.createHoleWithMask(mainImgMat, maskImgMat, destMat);
+        algCalculator.fillHolePixels(destMat, connectivityType, weightingParams);
         conversionHandler.reconvertNormalizedImage(destMat);
         display.saveImgToOutputFile(model.getOutputDir(), mainImgName, destMat);
     }

@@ -18,15 +18,14 @@ public class HoleFillerConversionHandler {
 	}
 	
     /**
-     * Carve an hole in the given image using the mask.
-     * Normalize the image values to 0 - 1.
-     * Set image values to -1 in the mask positions.
-     * Convert to type:CV_32FC1
-     * @param mainImgMat grayScale image (0-255).
-     * @param maskImgMat grayScale image (0-255), (the black pixels represent the hole).
-     * @param dst Save the result to dst.
+     * Creates a grayscale destination image which composed from a grayscale source image 
+     * and holes determined by a grayscale mask image.
+     * This function also normalizes the value of the pixels to be in the range [0,1].
+     * @param mainImgMat - grayscale source image.
+     * @param maskImgMat - grayScale mask image.
+     * @param dst - grayscale destination image.
      */
-    public void carveHoleUsingMask(Mat mainImgMat, Mat maskImgMat, Mat dst){
+    public void createHoleWithMask(Mat mainImgMat, Mat maskImgMat, Mat dst){
         Core.normalize(mainImgMat, dst,0.0,1.0, Core.NORM_MINMAX, CvType.CV_32FC1);
         Mat binMask = new Mat();
         Imgproc.threshold(maskImgMat, binMask, 127, 1, Imgproc.THRESH_BINARY_INV);
@@ -39,8 +38,8 @@ public class HoleFillerConversionHandler {
     }
     
     /**
-     * Get GrayScale image with 0-1 values, CV_32FC1 type
-     * and convert it to 0-255 scale and CV_8UC1 type.
+     * Gets a grayscale image with values in the range [0,1]
+     * and converts the values to the range [0,255].
      */
     public void reconvertNormalizedImage(Mat im){
         Core.multiply(im, new Scalar(255), im);

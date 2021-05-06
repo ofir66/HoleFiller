@@ -8,10 +8,13 @@ import data.HoleFillerModel;
 import data.HoleFillingAlgorithm;
 import data.Image;
 import data.WeightingFunc;
-import data.WeightingParams;
+import data.WeightingFuncParams;
 import imageProcessorInterface.ImageProcessor;
 import view.HoleFillerDisplay;
 
+/**
+ * A wrapper that connects all the library layers (model, display, control) together.
+ */
 public class HoleFiller implements ImageProcessor{
 
 	private final HoleFillerModel model;
@@ -19,7 +22,7 @@ public class HoleFiller implements ImageProcessor{
 	private final HoleFillerController controller;
 	
 	public HoleFiller(ConnectivityType connectivityTypeVal, HoleFillingAlgorithm holeFillingAlgorithmVal, Image mainImgVal,
-			Image maskImgVal, WeightingFunc weightingFuncVal, WeightingParams weightingParamsVal,
+			Image maskImgVal, WeightingFunc weightingFuncVal, WeightingFuncParams weightingParamsVal,
 			Directory inputDirVal, Directory outputDirVal) {
 		this.model = new HoleFillerModel(connectivityTypeVal, holeFillingAlgorithmVal, mainImgVal, maskImgVal,
 				weightingFuncVal, weightingParamsVal, inputDirVal, outputDirVal);

@@ -1,5 +1,8 @@
 package data;
 
+/**
+ * A class to hold all the data the hole filling library needs.
+ */
 public class HoleFillerModel {
 	
 	private final ConnectivityType connectivityType;
@@ -7,13 +10,13 @@ public class HoleFillerModel {
 	private final Image mainImg;
 	private final Image maskImg;
 	private final WeightingFunc weightingFunc;
-	private final WeightingParams weightingParams;
+	private final WeightingFuncParams weightingParams;
 	private final Directory inputDir;
 	private final Directory outputDir;
 	
 	
 	public HoleFillerModel(ConnectivityType connectivityTypeVal, HoleFillingAlgorithm holeFillingAlgorithmVal, Image mainImgVal,
-			Image maskImgVal, WeightingFunc weightingFuncVal, WeightingParams weightingParamsVal, 
+			Image maskImgVal, WeightingFunc weightingFuncVal, WeightingFuncParams weightingParamsVal, 
 			Directory inputDirVal, Directory outputDirVal) {
 		this.connectivityType = connectivityTypeVal;
 		this.holeFillingAlgorithm = holeFillingAlgorithmVal;
@@ -46,7 +49,7 @@ public class HoleFillerModel {
 		return weightingFunc;
 	}
 
-	public WeightingParams getWeightingParams() {
+	public WeightingFuncParams getWeightingParams() {
 		return weightingParams;
 	}
 

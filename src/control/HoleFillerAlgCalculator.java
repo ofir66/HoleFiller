@@ -14,17 +14,21 @@ import data.ConnectivityType;
 import data.HoleFillingAlgorithm;
 import data.Pixel;
 import data.WeightingFunc;
-import data.WeightingParams;
+import data.WeightingFuncParams;
 
+/**
+ * A handler for calculating all algorithm related issues:
+ * weight between pixels, finding boundary pixels and more.
+ */
 public class HoleFillerAlgCalculator {
 
 	private final WeightingFunc weightingFunc;
-	private final WeightingParams weightingParams;
+	private final WeightingFuncParams weightingParams;
 	private final ConnectivityType connectivityType;
 	private final HoleFillingAlgorithm algorithm;
 
 	
-	public HoleFillerAlgCalculator(WeightingFunc weightingFuncVal, WeightingParams weightingParamsVal, 
+	public HoleFillerAlgCalculator(WeightingFunc weightingFuncVal, WeightingFuncParams weightingParamsVal, 
 			ConnectivityType connectivityTypeVal, HoleFillingAlgorithm algorithmVal) {
 		this.weightingFunc = weightingFuncVal;
 		this.weightingParams = weightingParamsVal;
@@ -32,7 +36,7 @@ public class HoleFillerAlgCalculator {
 		this.algorithm = algorithmVal;
 	}
 	
-	protected final float calcWeight(Pixel p1, Pixel p2) {
+	private final float calcWeight(Pixel p1, Pixel p2) {
 		float weight = -1;
 		
 		switch(weightingFunc) {
@@ -45,6 +49,12 @@ public class HoleFillerAlgCalculator {
 		return weight;
 	}
 	
+	/**
+	 * Finds all neighbors (including holes) of a pixel in an image
+	 * @param p - the pixel to find its neighbors
+	 * @param im - the image to find the neighbors in
+	 * @return list of the neighbors of p
+	 */
     private List<Pixel> getNeighbors(Pixel p, Mat im){
     	List<Pixel> neighbs = new ArrayList<Pixel>();
         int pX = p.getX();
@@ -73,7 +83,13 @@ public class HoleFillerAlgCalculator {
     	return neighbs;
     }
     
-    public List<Pixel> getBoundaryPixels(Pixel p, Mat im){
+    /**
+     * Finds all neighbors of a pixel in an image, not including the hole neighbors
+	 * @param p - the pixel to find its neighbors
+	 * @param im - the image to find the neighbors in
+	 * @return list of the neighbors of p, not including the hole neighbors
+     */
+    public List<Pixel> getNeighborsWithoutHoles(Pixel p, Mat im){
     	List<Pixel> neighbs = getNeighbors(p, im);
     	List<Pixel> neighbsWithoutHoles = new ArrayList<Pixel>();
     	
@@ -87,7 +103,7 @@ public class HoleFillerAlgCalculator {
     	return neighbsWithoutHoles;
     }
     
-    public List<Pixel> findHolePixels(Mat im) {
+    private List<Pixel> findHolePixels(Mat im) {
     	Size s = im.size();
     	List<Pixel> holePixels = new ArrayList<Pixel>();
     	
@@ -104,43 +120,50 @@ public class HoleFillerAlgCalculator {
     }
     
     /**
-     * Gets image that contains one hole with (-1) pixels value.
-     * Returns all the pixels around the hole s.t each boundary pixel is
-     * connected to the hole with the given type definition.
-     * @param im image contains one hole.
-     * @return A set with all the boundary pixels.
+     * Finds the boundary pixels of an image.
+     * A boundary pixel is defined as pixel that is connected to a hole pixel, but is not in the hole itself.
+     * @param im - the image to look for the boundary pixels
+     * @param connectivityType - the pixel connectivity type
+     * @param holePixels - list of pixels that are holes in the image
+     * @return list of the boundary pixels in the image
      */
-    private List<Pixel> findHoleBoundary(Mat im, ConnectivityType t, List<Pixel> holePixels){
+    private List<Pixel> findBoundaryPixels(Mat im, ConnectivityType connectivityType, List<Pixel> holePixels){
         List<Pixel> bounds = new ArrayList<Pixel>();
         for (Pixel h: holePixels) {
-        	bounds.addAll(getBoundaryPixels(h, im));
+        	bounds.addAll(getNeighborsWithoutHoles(h, im));
         }
         
         return bounds;
     }
     
     /**
-     * Fills a hole inside the given image, that marks by -1 pixels.
-     * Defines the hole's pixels value as an weighted average of the pixels around the hole.
-     * Use the Lib's default pixel weight object for the hole filling calculation.
-     * Need z and epsilon values to define it.
-     * The Lib's default equation: W(a, b) = (||a-b||^z + epsilon)^-1
+     * Fills the hole pixels in the image.
+     * @param im - the image to fill the hole pixels in
+     * @param connectivityType - the pixel connectivity type
+     * @param weightingParams - the weighting parameters for calculating the hole filling algorithm
      */
-    public void fillHole(Mat im, ConnectivityType t, WeightingParams weightingParams)
+    public void fillHolePixels(Mat im, ConnectivityType connectivityType, WeightingFuncParams weightingParams)
     {
     	switch(this.algorithm) {
     		case DEFAULT:
-    			this.fillHoleDefault(im, t, weightingParams);
+    			this.fillHolePixelsDefaultAlg(im, connectivityType, weightingParams);
     			break;
     		case APPROXIMATE:
-    			this.fillHoleApprox(im, t, weightingParams);
+    			this.fillHolePixelsApproxAlg(im, connectivityType, weightingParams);
     	}
     }
     
-    public void fillHoleDefault(Mat im, ConnectivityType t, WeightingParams weightingParams)
+    /**
+     * Fills the hole pixels in the image according to a standard algorithm.
+     * run time: O(n^2), where n is the number of the pixels in the image
+     * @param im - the image to fill the hole pixels in
+     * @param connectivityType - the pixel connectivity type
+     * @param weightingParams - the weighting parameters for calculating the hole filling algorithm
+     */
+    private void fillHolePixelsDefaultAlg(Mat im, ConnectivityType connectivityType, WeightingFuncParams weightingParams)
     {
     	List<Pixel> holePixels = this.findHolePixels(im);
-        List<Pixel> bound = findHoleBoundary(im, t, holePixels);
+        List<Pixel> bound = findBoundaryPixels(im, connectivityType, holePixels);
         
         for (Pixel hole: holePixels) {
             double numeratorSum = 0;
@@ -155,16 +178,19 @@ public class HoleFillerAlgCalculator {
     }
     
     /**
-     * Q2
-     * Approximate method that fo over all the nearest neighbors.
+     * Fills the hole pixels in the image according to an algorithm that approximates the result.
+     * run time: O(n), where n is the number of the pixels in the image
+     * @param im - the image to fill the hole pixels in
+     * @param connectivityType - the pixel connectivity type
+     * @param weightingParams - the weighting parameters for calculating the hole filling algorithm
      */
-    public void fillHoleApprox(Mat im, ConnectivityType t, WeightingParams weightingParams){
+    private void fillHolePixelsApproxAlg(Mat im, ConnectivityType connectivityType, WeightingFuncParams weightingParams){
     	List<Pixel> holePixels = this.findHolePixels(im);
         
         for (Pixel hole: holePixels) {
             double numeratorSum = 0;
             double denominatorSum = 0;
-            List<Pixel> bound = getBoundaryPixels(hole, im);
+            List<Pixel> bound = getNeighborsWithoutHoles(hole, im);
             
             for (Pixel neighbor : bound){
                 float weight = abs(calcWeight(neighbor, hole));

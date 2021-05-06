@@ -8,8 +8,11 @@ import org.opencv.imgcodecs.Imgcodecs;
 import data.ConnectivityType;
 import data.Directory;
 import data.Image;
-import data.WeightingParams;
+import data.WeightingFuncParams;
 
+/**
+ * A class for all the display issues of the hole filling library
+ */
 public class HoleFillerDisplay {
 	
 	public static void printToStdout(String msg) {
@@ -20,7 +23,7 @@ public class HoleFillerDisplay {
 		System.err.println(msg);
 	}
 	
-	public void printHoleFillStartMsg(Image mainImg, Image mskImg, WeightingParams weightingParams, 
+	public void printHoleFillStartMsg(Image mainImg, Image mskImg, WeightingFuncParams weightingParams, 
 			ConnectivityType connectivityType) {
     	String imagePath = mainImg.getPath();
     	String maskPath = mskImg.getPath();
