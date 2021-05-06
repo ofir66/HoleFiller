@@ -36,5 +36,6 @@ public class HoleFillerDisplay {
 	
 	public void saveImgToOutputFile(Directory outputDir, String outputFileName, Mat processedImg) {
 		Imgcodecs.imwrite(outputDir.getPath() + "/" + outputFileName, processedImg);
+		System.out.println("Result was saved in output folder");
 	}
 }

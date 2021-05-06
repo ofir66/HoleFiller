@@ -1,6 +1,5 @@
 package control;
 import org.opencv.core.*;
-import org.opencv.imgcodecs.Imgcodecs;
 import data.ConnectivityType;
 import data.HoleFillerModel;
 import data.WeightingParams;
@@ -24,15 +23,15 @@ public class HoleFillerController {
     
 	private boolean validateInputImages(Mat src, Mat mask) {
 		if (src.empty()) {
-			System.err.println("Error: format for image source is invalid");
+			HoleFillerDisplay.printToStderr("Error: format for image source is invalid");
 			return false;
 		}
 		if (mask.empty()){
-            System.err.println("Error: format for mask source is invalid");
+			HoleFillerDisplay.printToStderr("Error: format for mask source is invalid");
             return false;
         }
         if (src.size().width != mask.size().width || src.size().height != mask.size().height){
-            System.err.println("Error: image and mask sources doesn't have the same dimensions");
+        	HoleFillerDisplay.printToStderr("Error: image and mask sources doesn't have the same dimensions");
             return false;
         }
         
@@ -64,7 +63,6 @@ public class HoleFillerController {
         algCalculator.fillHole(destMat, connectivityType, weightingParams);
         conversionHandler.reconvertNormalizedImage(destMat);
         display.saveImgToOutputFile(model.getOutputDir(), imageName, destMat);
-        System.out.println("Result was saved in output folder");
     }
 }
 

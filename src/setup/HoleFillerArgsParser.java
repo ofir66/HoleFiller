@@ -5,6 +5,7 @@ import java.io.File;
 import data.ConnectivityType;
 import data.Directory;
 import data.WeightingParams;
+import view.HoleFillerDisplay;
 
 public class HoleFillerArgsParser {
 
@@ -45,7 +46,7 @@ public class HoleFillerArgsParser {
     	int argsLen = args.length;
     	
     	if (argsLen != 5) {
-    		System.err.println("Wrong number of arguments, "
+    		HoleFillerDisplay.printToStderr("Wrong number of arguments, "
     							+ "please enter arguments list as described in the documentation for this method");
     		return false;
     	}
@@ -71,12 +72,12 @@ public class HoleFillerArgsParser {
     	                try {
     	                    z = Integer.parseInt(args[i]);
     	                } catch (NumberFormatException e){
-    	                    System.err.println("Error - z value isn't an integer");
+    	                	HoleFillerDisplay.printToStderr("Error - z value isn't an integer");
     	                    return false;
     	                }
     	                
     	                if (z <= 0){
-    	                    System.err.println("z value invalid - should be an integer>0");
+    	                	HoleFillerDisplay.printToStderr("z value invalid - should be an integer>0");
     	                    return false;
     	                }
     	                
@@ -91,13 +92,13 @@ public class HoleFillerArgsParser {
     	                		connectivityType = ConnectivityType.C8;
     	                	}
     	                } catch (NumberFormatException e){
-    	                    System.err.println("Error - connectivity value isn't an integer");
+    	                	HoleFillerDisplay.printToStderr("Error - connectivity value isn't an integer");
     	                    return false;
     	                }
     	                if ( (connectivityType != ConnectivityType.C4) && 
     	                	 (connectivityType != ConnectivityType.C8) ) {
-    	                	System.err.println("Error - connectivity value must be 4 or 8, current value is: " 
-    	                					   + connectivityType);
+    	                	HoleFillerDisplay.printToStderr("Error - connectivity value must be 4 or 8, current value is: " 
+             					   + connectivityType);
     	                	return false;
     	                }
     	                break;
@@ -105,12 +106,12 @@ public class HoleFillerArgsParser {
     	                try {
     	                    epsilon = Float.parseFloat(args[i]);
     	                } catch (NumberFormatException e){
-    	                	System.err.println("Error - epsilon value isn't a float");
+    	                	HoleFillerDisplay.printToStderr("Error - epsilon value isn't a float");
     	                    return false;
     	                }
     	                
     	                if (epsilon <= 0){
-    	                    System.err.println("epsilon value is invalid - should be a float>0");
+    	                	HoleFillerDisplay.printToStderr("epsilon value is invalid - should be a float>0");
     	                    return false;
     	                }
     			}
@@ -125,7 +126,7 @@ public class HoleFillerArgsParser {
 	private boolean assertPathExists(String path) {
         File file = new File(path);
         if (!file.exists()) {
-            System.err.println("The path: " + path + " doesn't exist, please enter a valid path");
+        	HoleFillerDisplay.printToStderr("The path: " + path + " doesn't exist, please enter a valid path");
             return false;
         }
 		return true;
