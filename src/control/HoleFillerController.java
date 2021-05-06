@@ -6,7 +6,6 @@ import org.opencv.imgproc.Imgproc;
 import data.ConnectivityType;
 import data.HoleFillerModel;
 import data.Pixel;
-import data.WeightingFunc;
 import data.WeightingParams;
 import old.WeightingDefaultFunc;
 
@@ -22,12 +21,15 @@ public class HoleFillerController {
 	// Load native library for opencv
     static{ System.loadLibrary(Core.NATIVE_LIBRARY_NAME); }
     
-    private static List<Pixel> holePixels = new ArrayList<Pixel>();
+    private List<Pixel> holePixels = new ArrayList<Pixel>();
     private final HoleFillerModel model;
+    private final HoleFillerAlgCalculator algCalculator;
 
     
     public HoleFillerController(HoleFillerModel modelVal) {
     	this.model = modelVal;
+    	algCalculator = new HoleFillerAlgCalculator(model.getWeightingFunc(), model.getWeightingParams(),
+    			model.getConnectivityType());
     }
     
 	private boolean validateInputImages(Mat src, Mat mask) {
@@ -70,22 +72,14 @@ public class HoleFillerController {
         
         
         Mat destMat = new Mat();
-        HoleFillerController.carveHoleUsingMask(imageMat, maskMat, destMat);
-        HoleFillerController.saveHolePixels(destMat);
-        HoleFillerController.fillHole(destMat, connectivityType, weightingParams);
-        HoleFillerController.reconvertNormalizedImage(destMat);
+        carveHoleUsingMask(imageMat, maskMat, destMat);
+        saveHolePixels(destMat);
+        fillHole(destMat, connectivityType, weightingParams);
+        reconvertNormalizedImage(destMat);
         Imgcodecs.imwrite("output/" + imageName, destMat);
         System.out.println("Result was saved in output folder");
     }
     
-    /**
-     * Creates an NeighborGetter object and return it.
-     * @param connectivityType the connectivity type of the getter obj.
-     * @return instance of NeighborGetter.
-     */
-    private static BoundaryCalculator createNeighborsGetter(ConnectivityType connectivityType){
-    	return new BoundaryCalculator(connectivityType);
-    }
 
     /**
      * Carve an hole in the given image using the mask.
@@ -96,7 +90,7 @@ public class HoleFillerController {
      * @param mask grayScale image (0-255), (the black pixels represent the hole).
      * @param dst Save the result to dst.
      */
-    public static void carveHoleUsingMask(Mat im, Mat mask, Mat dst){
+    public void carveHoleUsingMask(Mat im, Mat mask, Mat dst){
         Core.normalize(im, dst,0.0,1.0, Core.NORM_MINMAX, CvType.CV_32FC1);
         Mat binMask = new Mat();
         Imgproc.threshold(mask, binMask, 127, 1, Imgproc.THRESH_BINARY_INV);
@@ -115,18 +109,16 @@ public class HoleFillerController {
      * @param im image contains one hole.
      * @return A set with all the boundary pixels.
      */
-    private static List<Pixel> findHoleBoundary(Mat im, ConnectivityType t){
-        BoundaryCalculator ng = createNeighborsGetter(t);
+    private List<Pixel> findHoleBoundary(Mat im, ConnectivityType t){
         List<Pixel> bounds = new ArrayList<Pixel>();
-        
         for (Pixel h: holePixels) {
-        	bounds.addAll(ng.getNeighborsWithoutHoles(h, im));
+        	bounds.addAll(this.algCalculator.getBoundaryPixels(h, im));
         }
         
         return bounds;
     }
     
-    public static void saveHolePixels(Mat im) {
+    public void saveHolePixels(Mat im) {
     	Size s = im.size();
     	
         for (int i = 0; i < s.height; i++) {
@@ -146,9 +138,8 @@ public class HoleFillerController {
      * Need z and epsilon values to define it.
      * The Lib's default equation: W(a, b) = (||a-b||^z + epsilon)^-1
      */
-    public static void fillHole(Mat im, ConnectivityType t, WeightingParams weightingParams)
+    public void fillHole(Mat im, ConnectivityType t, WeightingParams weightingParams)
     {
-    	HoleFillerAlgCalculator algCalculator = new HoleFillerAlgCalculator(WeightingFunc.DEFAULT, weightingParams);
         List<Pixel> bound = findHoleBoundary(im, t);
         
         for (Pixel hole: holePixels) {
@@ -167,14 +158,13 @@ public class HoleFillerController {
      * Q2
      * Approximate method that fo over all the nearest neighbors.
      */
-    public static void fillHoleQ2(Mat im, ConnectivityType t, WeightingParams weightingParams){
+    public void fillHoleQ2(Mat im, ConnectivityType t, WeightingParams weightingParams){
     	WeightingDefaultFunc wf = new WeightingDefaultFunc(weightingParams.getZ(), weightingParams.getEpsilon());
-        BoundaryCalculator ng = createNeighborsGetter(t);
         
         for (Pixel hole: holePixels) {
             double numeratorSum = 0;
             double denominatorSum = 0;
-            List<Pixel> bound = ng.getNeighborsWithoutHoles(hole, im);
+            List<Pixel> bound = this.algCalculator.getBoundaryPixels(hole, im);
             
             for (Pixel neighbor : bound){
                 float weight = abs(wf.getWeight(neighbor, hole));
@@ -189,7 +179,7 @@ public class HoleFillerController {
      * Get GrayScale image with 0-1 values, CV_32FC1 type
      * and convert it to 0-255 scale and CV_8UC1 type.
      */
-    public static void reconvertNormalizedImage(Mat im){
+    public void reconvertNormalizedImage(Mat im){
         Core.multiply(im, new Scalar(255), im);
         im.convertTo(im, CvType.CV_8UC1);
     }

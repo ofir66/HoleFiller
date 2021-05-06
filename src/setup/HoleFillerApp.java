@@ -28,39 +28,5 @@ public class HoleFillerApp {
     			image, mask, WeightingFunc.DEFAULT, weightingParams);
     	
     	holeFiller.process();
-        
-    	/*
-    	
-        String imageName = new File(imagePath).getName();
-        String maskName = new File(maskPath).getName();
-        
-        Mat imageMat = Imgcodecs.imread(imagePath, Imgcodecs.IMREAD_GRAYSCALE);
-        Mat maskMat = Imgcodecs.imread(maskPath, Imgcodecs.IMREAD_GRAYSCALE);
-        
-        if (!validateInputImages(imageMat, maskMat)) {
-        	return;
-        }
-        
-        System.out.println("Fill hole for: " + imageName + "\n" + 
-        				   "use mask: " + maskName + "\n" +
-        				   "z value: " + weightingParams.getZ() + "\n" + 
-        				   "epsilon value: " + weightingParams.getEpsilon() + "\n" + 
-        				   "connectivity value: " + connectivityType + "\n");
-        
-        
-        Mat destMat = new Mat();
-        HoleFillerController.carveHoleUsingMask(imageMat, maskMat, destMat);
-        HoleFillerController.saveHolePixels(destMat);
-        if (connectivityType == ConnectivityType.C8.getConnectivityDegree()){
-            HoleFillerController.fillHole(destMat, ConnectivityType.C8, weightingParams);
-        } 
-        else {
-            HoleFillerController.fillHole(destMat, ConnectivityType.C4, weightingParams);
-        }
-        HoleFillerController.reconvertNormalizedImage(destMat);
-        Imgcodecs.imwrite("output/" + imageName, destMat);
-        System.out.println("Result was saved in output folder");
-        
-        */
     }
 }
