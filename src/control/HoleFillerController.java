@@ -1,10 +1,8 @@
 package control;
 import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
 import data.ConnectivityType;
 import data.HoleFillerModel;
-import data.Image;
 import data.WeightingParams;
 import java.io.File;
 

@@ -15,7 +15,6 @@ import data.HoleFillingAlgorithm;
 import data.Pixel;
 import data.WeightingFunc;
 import data.WeightingParams;
-import old.WeightingDefaultFunc;
 
 public class HoleFillerAlgCalculator {
 
@@ -160,7 +159,6 @@ public class HoleFillerAlgCalculator {
      * Approximate method that fo over all the nearest neighbors.
      */
     public void fillHoleApprox(Mat im, ConnectivityType t, WeightingParams weightingParams){
-    	WeightingDefaultFunc wf = new WeightingDefaultFunc(weightingParams.getZ(), weightingParams.getEpsilon());
     	List<Pixel> holePixels = this.findHolePixels(im);
         
         for (Pixel hole: holePixels) {
@@ -169,7 +167,7 @@ public class HoleFillerAlgCalculator {
             List<Pixel> bound = getBoundaryPixels(hole, im);
             
             for (Pixel neighbor : bound){
-                float weight = abs(wf.getWeight(neighbor, hole));
+                float weight = abs(calcWeight(neighbor, hole));
                 denominatorSum += weight;
                 numeratorSum += (weight * im.get(neighbor.getX(), neighbor.getY())[0]);
             }
