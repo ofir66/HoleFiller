@@ -10,7 +10,7 @@ public class HoleFillerArgsParser {
     private String imagePath;
     private String maskPath;
     private WeightingParams weightingParams;
-    private int connectivityType;
+    private ConnectivityType connectivityType;
     private String[] args;
 	
     private final int IMAGE_PATH = 0;
@@ -23,7 +23,7 @@ public class HoleFillerArgsParser {
         imagePath = null;
         maskPath = null;
         weightingParams = null;
-        connectivityType = 0;
+        connectivityType = ConnectivityType.C4;
     	args = argsVal;
     }
     
@@ -80,13 +80,19 @@ public class HoleFillerArgsParser {
     	                break;
     				case CONNECTIVITY_VALUE:
     	                try {
-    	                    connectivityType = Integer.parseInt(args[i]);
+    	                	int connectivityDegree = Integer.parseInt(args[i]);
+    	                	if (connectivityDegree == 4) {
+    	                		connectivityType = ConnectivityType.C4;
+    	                	}
+    	                	else {
+    	                		connectivityType = ConnectivityType.C8;
+    	                	}
     	                } catch (NumberFormatException e){
     	                    System.err.println("Error - connectivity value isn't an integer");
     	                    return false;
     	                }
-    	                if ( (connectivityType != ConnectivityType.C4.getConnectivityType()) && 
-    	                	 (connectivityType != ConnectivityType.C8.getConnectivityType()) ) {
+    	                if ( (connectivityType != ConnectivityType.C4) && 
+    	                	 (connectivityType != ConnectivityType.C8) ) {
     	                	System.err.println("Error - connectivity value must be 4 or 8, current value is: " 
     	                					   + connectivityType);
     	                	return false;
@@ -136,7 +142,7 @@ public class HoleFillerArgsParser {
 		return weightingParams;
 	}
 
-	public int getConnectivityType() {
+	public ConnectivityType getConnectivityType() {
 		return connectivityType;
 	}
 }

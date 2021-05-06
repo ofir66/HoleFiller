@@ -3,11 +3,11 @@ public enum ConnectivityType {
     C4(4),
     C8(8);
 	
-	private final int connectivityType;
+	private final int connectivityDegree;
 	
-	ConnectivityType(final int newConnectivityType){
-		connectivityType = newConnectivityType;
+	ConnectivityType(final int newConnectivityDegree){
+		connectivityDegree = newConnectivityDegree;
 	}
 	
-	public int getConnectivityType() { return connectivityType; }
+	public int getConnectivityDegree() { return connectivityDegree; }
 }

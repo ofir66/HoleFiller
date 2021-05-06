@@ -1,16 +1,15 @@
 package data;
 
-import org.opencv.core.Mat;
 
 public class Image {
 	
-	private final Mat img;
+	private final String path;
 
-	public Image(Mat imgVal) {
-		this.img = imgVal;
+	public Image(String pathVal) {
+		this.path = pathVal;
 	}
 
-	public Mat getImg() {
-		return img;
+	public String getPath() {
+		return path;
 	}
 }

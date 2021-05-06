@@ -1,5 +1,6 @@
 package control;
 import org.opencv.core.*;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import data.ConnectivityType;
@@ -14,6 +15,8 @@ import java.util.List;
 
 import static java.lang.Math.*;
 
+import java.io.File;
+
 
 public class HoleFillerController {
 	// Load native library for opencv
@@ -25,6 +28,54 @@ public class HoleFillerController {
     
     public HoleFillerController(HoleFillerModel modelVal) {
     	this.model = modelVal;
+    }
+    
+	private boolean validateInputImages(Mat src, Mat mask) {
+		if (src.empty()) {
+			System.err.println("Error: format for image source is invalid");
+			return false;
+		}
+		if (mask.empty()){
+            System.err.println("Error: format for mask source is invalid");
+            return false;
+        }
+        if (src.size().width != mask.size().width || src.size().height != mask.size().height){
+            System.err.println("Error: image and mask sources doesn't have the same dimensions");
+            return false;
+        }
+        
+        return true;
+	}
+    
+    public void process() {
+    	String imagePath = model.getImg().getPath();
+    	String maskPath = model.getMask().getPath();
+        String imageName = new File(imagePath).getName();
+        String maskName = new File(maskPath).getName();
+        Mat imageMat = Imgcodecs.imread(imagePath, Imgcodecs.IMREAD_GRAYSCALE);
+        Mat maskMat = Imgcodecs.imread(maskPath, Imgcodecs.IMREAD_GRAYSCALE);
+        
+        WeightingParams weightingParams = model.getWeightingParams();
+        ConnectivityType connectivityType = model.getConnectivityType();
+        
+        if (!validateInputImages(imageMat, maskMat)) {
+        	return;
+        }
+        
+        System.out.println("Fill hole for: " + imageName + "\n" + 
+        				   "use mask: " + maskName + "\n" +
+        				   "z value: " + weightingParams.getZ() + "\n" + 
+        				   "epsilon value: " + weightingParams.getEpsilon() + "\n" + 
+        				   "connectivity value: " + connectivityType.getConnectivityDegree() + "\n");
+        
+        
+        Mat destMat = new Mat();
+        HoleFillerController.carveHoleUsingMask(imageMat, maskMat, destMat);
+        HoleFillerController.saveHolePixels(destMat);
+        HoleFillerController.fillHole(destMat, connectivityType, weightingParams);
+        HoleFillerController.reconvertNormalizedImage(destMat);
+        Imgcodecs.imwrite("output/" + imageName, destMat);
+        System.out.println("Result was saved in output folder");
     }
     
     /**

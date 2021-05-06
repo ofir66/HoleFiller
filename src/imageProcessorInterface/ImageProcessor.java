@@ -1,6 +1,6 @@
 package imageProcessorInterface;
 
-public interface ImageProcessor<T,V> {
+public interface ImageProcessor {
 	
-	public T process(V imgSrc);
+	public void process();
 }
