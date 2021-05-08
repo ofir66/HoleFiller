@@ -59,7 +59,9 @@ public class HoleFillerController {
         	return;
         }
         
-        display.printHoleFillStartMsg(model.getMainImg(), model.getMaskImg());
+        display.printHoleFillStartMsg(model.getMainImg(), model.getMaskImg(), 
+        		ControlConstants.Z_VALUE, ControlConstants.EPSILON_VALUE, 
+        		ControlConstants.CONNECTIVITY_TYPE);
         
         conversionHandler.createHoleWithMask(mainImgMat, maskImgMat, destMat);
         algCalculator.fillHolePixels(destMat, weightFunc, alg);

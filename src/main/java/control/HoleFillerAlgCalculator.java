@@ -10,7 +10,6 @@ import java.util.List;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
-import constants.GlobalConstants;
 import data.ConnectivityType;
 import data.HoleFillingAlgorithm;
 import data.Pixel;
@@ -84,7 +83,7 @@ public class HoleFillerAlgCalculator {
     	
     	for (Pixel pI : neighbs) {
     		double[] val = im.get(pI.getX(), pI.getY());
-            if (val[0] != GlobalConstants.HOLE_INDICATOR){
+            if (val[0] != ControlConstants.HOLE_INDICATOR){
             	neighbsWithoutHoles.add(pI);
             }
     	}
@@ -99,7 +98,7 @@ public class HoleFillerAlgCalculator {
         for (int i = 0; i < size.height; i++) {
             for (int j = 0; j < size.width; j++) {
                 double[] val = im.get(i, j);
-                if (val[0] == GlobalConstants.HOLE_INDICATOR){
+                if (val[0] == ControlConstants.HOLE_INDICATOR){
                 	holePixels.add(new Pixel(i, j));
                 }
             }
@@ -133,9 +132,9 @@ public class HoleFillerAlgCalculator {
      */
     public void fillHolePixels(Mat im, WeightingFunc weightFunc, HoleFillingAlgorithm alg)
     {
-    	WeightingFuncParams weightParams = new WeightingFuncParams(GlobalConstants.Z_VALUE, 
-    			GlobalConstants.EPSILON_VALUE);
-    	ConnectivityType connectType = GlobalConstants.CONNECTIVITY_TYPE;
+    	WeightingFuncParams weightParams = new WeightingFuncParams(ControlConstants.Z_VALUE, 
+    			ControlConstants.EPSILON_VALUE);
+    	ConnectivityType connectType = ControlConstants.CONNECTIVITY_TYPE;
     	
     	switch(alg) {
     		case DEFAULT:

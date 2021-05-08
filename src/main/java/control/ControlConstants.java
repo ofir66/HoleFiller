@@ -1,8 +1,8 @@
-package constants;
+package control;
 
 import data.ConnectivityType;
 
-public class GlobalConstants {
+class ControlConstants {
 
 	public static final double HOLE_INDICATOR = -1;
 	public static final double MIN_LIBRARY_PIXEL_VALUE = 0;
