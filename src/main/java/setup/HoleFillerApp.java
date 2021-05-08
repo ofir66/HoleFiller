@@ -1,12 +1,10 @@
 package setup;
 
 import org.opencv.core.Core;
-import data.ConnectivityType;
 import data.Directory;
 import data.HoleFillingAlgorithm;
 import data.Image;
 import data.WeightingFunc;
-import data.WeightingFuncParams;
 import holeFillerImpl.HoleFiller;
 
 /**
@@ -15,12 +13,9 @@ import holeFillerImpl.HoleFiller;
 public class HoleFillerApp {
     /**
      * Initializes the hole filling library.
-     * the parameter args should contain the following 5 elements: <br>
+     * the parameter args should contain the following 2 elements: <br>
      * args[0] = path to the main image. <br>
      * args[1] = path to the mask image (which describes the holes in the main image). <br>
-     * args[2] = z value. <br>
-     * args[3] = connectivityType - should be "4" or "8" only. <br>
-     * args[4] = epsilon value.
      * @param args - command line arguments
      */
     public static void main(String[] args) {
@@ -42,27 +37,11 @@ public class HoleFillerApp {
             return;
         }
     	
-    	int z = parser.parseZValue(args);
-    	if (z == CmdLineArg.INVALID_Z_VALUE){
-            return;
-        }
-    	
-    	ConnectivityType connectivityType = parser.parseConnectivitiyValue(args);
-    	if (connectivityType == CmdLineArg.INVALID_CONNECTIVITY_VALUE) {
-    		return;
-    	}
-    	
-    	float epsilon = parser.parseEpsilonValue(args);
-    	if (epsilon == CmdLineArg.INVALID_EPSILON_VALUE) {
-    		return;
-    	}
-    	
     	Image mainImg = new Image(mainImgPath);
     	Image maskImg = new Image(maskImgPath);
-    	WeightingFuncParams weightingParams = new WeightingFuncParams(z, epsilon);
     	
-    	HoleFiller holeFiller = new HoleFiller(connectivityType, HoleFillingAlgorithm.DEFAULT, 
-    			mainImg, maskImg, WeightingFunc.DEFAULT, weightingParams, inputDir, outputDir);
+    	HoleFiller holeFiller = new HoleFiller(HoleFillingAlgorithm.DEFAULT, 
+    			mainImg, maskImg, WeightingFunc.DEFAULT, inputDir, outputDir);
     	
     	holeFiller.process();
     }

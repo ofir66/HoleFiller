@@ -34,7 +34,7 @@ public class HoleFillerConversionHandler {
         		Imgproc.THRESH_BINARY_INV);
         
         /*
-         * sets all values on dst that aren't HOLE_INDICATOR on binaryMask to be HOLE_INDICATOR
+         * for each pixel p in binaryMask that fullfils binaryMask[p] != 0 -> dst[p] = -1 
          * example: https://stackoverflow.com/questions/8971308/what-is-cvsetto-function/8973044
          */
         dst.setTo(new Scalar(GlobalConstants.HOLE_INDICATOR), binaryMask);

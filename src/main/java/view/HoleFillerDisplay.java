@@ -5,10 +5,9 @@ import java.io.File;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 
-import data.ConnectivityType;
+import constants.GlobalConstants;
 import data.Directory;
 import data.Image;
-import data.WeightingFuncParams;
 
 /**
  * A class for all the display issues of the hole filling library
@@ -23,8 +22,7 @@ public class HoleFillerDisplay {
 		System.err.println(msg);
 	}
 	
-	public void printHoleFillStartMsg(Image mainImg, Image mskImg, WeightingFuncParams weightingParams, 
-			ConnectivityType connectivityType) {
+	public void printHoleFillStartMsg(Image mainImg, Image mskImg) {
     	String imagePath = mainImg.getPath();
     	String maskPath = mskImg.getPath();
         String imageName = new File(imagePath).getName();
@@ -32,9 +30,9 @@ public class HoleFillerDisplay {
 		
 		System.out.println("Fill hole for: " + imageName + "\n" + 
 				   "Use mask: " + maskName + "\n" +
-				   "z value: " + weightingParams.getZ() + "\n" + 
-				   "epsilon value: " + weightingParams.getEpsilon() + "\n" + 
-				   "connectivity value: " + connectivityType.getConnectivityDegree() + "\n");
+				   "z value: " + GlobalConstants.Z_VALUE + "\n" + 
+				   "epsilon value: " + GlobalConstants.EPSILON_VALUE + "\n" + 
+				   "connectivity value: " + GlobalConstants.CONNECTIVITY_TYPE + "\n");
 	}
 	
 	public void saveImgToOutputFile(Directory outputDir, String outputFileName, Mat processedImg) {

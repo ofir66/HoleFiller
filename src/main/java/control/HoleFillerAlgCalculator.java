@@ -128,14 +128,15 @@ public class HoleFillerAlgCalculator {
     /**
      * Fills the hole pixels in the image.
      * @param im - the image to fill the hole pixels in
-     * @param connectType - the pixel connectivity type
      * @param weightFunc - the weighting function for calculating weight between pixels
-     * @param weightParams - the weighting parameters for calculating the weighting function
      * @param alg - the algorithm for the hole filling
      */
-    public void fillHolePixels(Mat im, ConnectivityType connectType, WeightingFunc weightFunc,
-    		WeightingFuncParams weightParams, HoleFillingAlgorithm alg)
+    public void fillHolePixels(Mat im, WeightingFunc weightFunc, HoleFillingAlgorithm alg)
     {
+    	WeightingFuncParams weightParams = new WeightingFuncParams(GlobalConstants.Z_VALUE, 
+    			GlobalConstants.EPSILON_VALUE);
+    	ConnectivityType connectType = GlobalConstants.CONNECTIVITY_TYPE;
+    	
     	switch(alg) {
     		case DEFAULT:
     			this.fillHolePixelsDefaultAlg(im, connectType, weightFunc, weightParams);
