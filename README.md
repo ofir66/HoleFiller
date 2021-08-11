@@ -22,10 +22,19 @@ The library supports grayscale images, and if the given images are not grayscale
 
 
 # Running Example
-You can see that inside `input` folder we have an image named `Lenna.png` which contains a hole.
-We also have an image named `Mask.png` inside `input` folder that represents the hole in `Lenna.png`.
+You can see that inside `input` folder we have an image named `Lenna.png` which contains a hole:
 
-In the `output` folder, we have an image named `Lenna.png` which is the result of applying the following commands from the `HoleFiller` folder: </br>
+![alt text](input/Lenna.png?raw=true "Title")
+
+We also have an image named `Mask.png` inside `input` folder that represents the hole in `Lenna.png`:
+
+![alt text](input/Mask.png?raw=true "Title")
+
+After applying the following commands from the `HoleFiller` folder: </br>
 `mvn compile` </br>
 `mvn exec:java -Dexec.args="Lenna.png Mask.png"`
+
+A new image will be created with the hole filled in the `output` folder under the name `Lenna.png`:
+
+![alt text](output/Lenna.png?raw=true "Title")
 
